@@ -35,7 +35,7 @@ func LoadConfig() (*Config, error) {
 		return nil, err
 	}
 
-	log.Printf("\nLoaded Config: \t%+v", config)
+	log.Printf("\nLoaded Config: %+v", config)
 
 	return &config, nil
 }

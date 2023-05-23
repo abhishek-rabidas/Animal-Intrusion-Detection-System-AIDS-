@@ -29,8 +29,8 @@ func (d *Detector) Load() {
 
 	d.net = gocv.ReadNet(d.config.Model, d.config.Cfg)
 
-	d.net.SetPreferableBackend(gocv.NetBackendDefault)
-	d.net.SetPreferableTarget(gocv.NetTargetCPU)
+	d.net.SetPreferableBackend(gocv.NetBackendType(gocv.NetBackendDefault))
+	d.net.SetPreferableTarget(gocv.NetTargetType(gocv.NetTargetCPU))
 
 	d.outputNames = getOutputsNames(&d.net)
 
@@ -47,8 +47,6 @@ func (d *Detector) Load() {
 }
 
 func (d *Detector) Process() {
-
-	defer d.Close()
 
 	mat := gocv.NewMat()
 
@@ -89,7 +87,6 @@ func detect(net *gocv.Net, src gocv.Mat, scoreThreshold float32, nmsThreshold fl
 	net.SetInput(blob, "")
 	probs := net.ForwardLayers(OutputNames)
 	boxes, confidences, classIds := postProcess(img, &probs)
-
 	indices := make([]int, 100)
 	if len(boxes) == 0 { // No Classes
 		return src, []string{}

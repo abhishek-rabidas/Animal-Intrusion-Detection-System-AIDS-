@@ -26,13 +26,13 @@ func Initialize() *AIDSEngine {
 	}
 }
 
-func (aids *AIDSEngine) start() error {
+func (aids *AIDSEngine) Start() error {
 	aids.Detector.Load()
 	aids.Detector.Process()
 	return nil
 }
 
-func (aids *AIDSEngine) stop() error {
+func (aids *AIDSEngine) Stop() error {
 	aids.Detector.Close()
 	return nil
 }
