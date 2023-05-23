@@ -21,17 +21,18 @@ func Initialize() *AIDSEngine {
 	log.Info("Initializing AIDS Engine")
 
 	return &AIDSEngine{
-		Detector: nil,
+		Detector: InitializeDetector(AIDSConfig),
 		Config:   *AIDSConfig,
 	}
 }
 
 func (aids *AIDSEngine) start() error {
-
+	aids.Detector.Load()
+	aids.Detector.Process()
 	return nil
 }
 
 func (aids *AIDSEngine) stop() error {
-
+	aids.Detector.Close()
 	return nil
 }

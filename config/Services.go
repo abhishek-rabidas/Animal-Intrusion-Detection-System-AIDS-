@@ -8,14 +8,17 @@ import (
 )
 
 type Config struct {
-	Model      string `json:"model"`
-	Cfg        string `json:"cfg"`
-	Feed       string `json:"feed"`
-	Classnames string `json:"classnames"`
+	Model          string  `json:"model"`
+	Cfg            string  `json:"cfg"`
+	Feed           string  `json:"feed"`
+	Classnames     string  `json:"classnames"`
+	GpuEnabled     bool    `json:"gpuEnabled"`
+	ScoreThreshold float32 `json:"scoreThreshold"`
+	NmsThreshold   float32 `json:"nmsThreshold"`
 }
 
 func LoadConfig() (*Config, error) {
-	configFile, err := os.OpenFile("./config/aids.go", os.O_RDONLY, 0666)
+	configFile, err := os.OpenFile("./config/aids.cfg", os.O_RDONLY, 0666)
 
 	if err != nil {
 		log.Error(err)

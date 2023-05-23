@@ -11,33 +11,30 @@ import (
 )
 
 type Detector struct {
-	net            gocv.Net
-	outputNames    []string
-	footage        *gocv.VideoCapture
-	window         *gocv.Window
-	classes        []string
-	gpuEnabled     bool
-	scoreThreshold float32
-	nmsThreshold   float32
-	config         *config.Config
+	net         gocv.Net
+	outputNames []string
+	footage     *gocv.VideoCapture
+	window      *gocv.Window
+	classes     []string
+	config      *config.Config
 }
 
 func InitializeDetector(config *config.Config) *Detector {
-	return &Detector{gpuEnabled: false, scoreThreshold: 0.45, nmsThreshold: 0.5, config: config}
+	return &Detector{config: config}
 }
 
 func (d *Detector) Load() {
 
 	var err error
 
-	d.net = gocv.ReadNet("./model/yolov4.weights", "./model/yolov4.cfg")
+	d.net = gocv.ReadNet(d.config.Model, d.config.Cfg)
 
 	d.net.SetPreferableBackend(gocv.NetBackendDefault)
 	d.net.SetPreferableTarget(gocv.NetTargetCPU)
 
 	d.outputNames = getOutputsNames(&d.net)
 
-	d.footage, err = gocv.VideoCaptureFile("https://rr2---sn-qxaelnez.googlevideo.com/videoplayback?expire=1684101159&ei=xwNhZIG2JsS-lu8P8vG8iAQ&ip=181.41.206.203&id=o-ALts9GDf2X6bszLvXeSMlwls7s7cMndgnFJ_4DfUUsam&itag=18&source=youtube&requiressl=yes&spc=qEK7B1CpqumqMMR8HA-r_QAk-DNTDN2RRWJEHrI4mg&vprv=1&svpuc=1&mime=video%2Fmp4&ns=uUCgUry2TFq0n7emdmx7iz4N&cnr=14&ratebypass=yes&dur=1801.496&lmt=1665157572495972&fexp=24007246,51000013&c=WEB&txp=4430434&n=jysEnwuFPmcGYA&sparams=expire%2Cei%2Cip%2Cid%2Citag%2Csource%2Crequiressl%2Cspc%2Cvprv%2Csvpuc%2Cmime%2Cns%2Ccnr%2Cratebypass%2Cdur%2Clmt&sig=AOq0QJ8wRgIhANzvWLbOz3qKhqG1u6NHOq2yN2Rv-usvIvZwJ4OPZ5wwAiEAwayFFH25nC2kaRsLJzlu0wMYNmU4_250DBDzIR5dDLg%3D&rm=sn-q4feek7z&req_id=4e0682f15f5a3ee&redirect_counter=2&cm2rm=sn-ugp2ax2a5t-qxas7l&cms_redirect=yes&cmsv=e&ipbypass=yes&mh=z3&mip=103.240.235.23&mm=29&mn=sn-qxaelnez&ms=rdu&mt=1684081754&mv=m&mvi=2&pl=24&lsparams=ipbypass,mh,mip,mm,mn,ms,mv,mvi,pl&lsig=AG3C_xAwRAIgVcdf_0RP72tNkb8XlR24jXjbf--buzbY1rKrXyeM9ZgCIAWiARcqYT1pHzdFtvNSqZGF_HY0vFle-fpEXcQtmLQr")
+	d.footage, err = gocv.VideoCaptureFile(d.config.Feed)
 
 	if err != nil {
 		log.Error(err)
@@ -45,7 +42,7 @@ func (d *Detector) Load() {
 
 	d.window = gocv.NewWindow("Animal Intrusion Detection System")
 
-	d.classes = readCOCO()
+	d.classes = readCOCO(d.config.Classnames)
 
 }
 
@@ -63,8 +60,8 @@ func (d *Detector) Process() {
 		}
 
 		if isTrue {
-			frame, _ := detect(&d.net, mat.Clone(), d.scoreThreshold,
-				d.nmsThreshold, d.outputNames, d.classes)
+			frame, _ := detect(&d.net, mat.Clone(), d.config.ScoreThreshold,
+				d.config.NmsThreshold, d.outputNames, d.classes)
 
 			d.window.IMShow(frame)
 			key := d.window.WaitKey(1)
@@ -158,9 +155,9 @@ func getOutputsNames(net *gocv.Net) []string {
 	return outputLayers
 }
 
-func readCOCO() []string {
+func readCOCO(path string) []string {
 	var classes []string
-	read, _ := os.Open("./model/coco.names")
+	read, _ := os.Open(path)
 	defer read.Close()
 	for {
 		var t string
