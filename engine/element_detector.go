@@ -1,6 +1,7 @@
 package engine
 
 import (
+	"AIDS/config"
 	"fmt"
 	log "github.com/sirupsen/logrus"
 	"gocv.io/x/gocv"
@@ -18,10 +19,11 @@ type Detector struct {
 	gpuEnabled     bool
 	scoreThreshold float32
 	nmsThreshold   float32
+	config         *config.Config
 }
 
-func NewAIDSEngine() *Detector {
-	return &Detector{gpuEnabled: false, scoreThreshold: 0.45, nmsThreshold: 0.5}
+func InitializeDetector(config *config.Config) *Detector {
+	return &Detector{gpuEnabled: false, scoreThreshold: 0.45, nmsThreshold: 0.5, config: config}
 }
 
 func (d *Detector) Load() {
