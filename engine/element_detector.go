@@ -23,7 +23,7 @@ func InitializeDetector(config *config.Config) *Detector {
 	return &Detector{config: config}
 }
 
-func (d *Detector) Load() {
+func (d *Detector) Load() error {
 
 	var err error
 
@@ -38,12 +38,14 @@ func (d *Detector) Load() {
 
 	if err != nil {
 		log.Error(err)
+		return err
 	}
 
 	d.window = gocv.NewWindow("Animal Intrusion Detection System")
 
 	d.classes = readCOCO(d.config.Classnames)
 
+	return nil
 }
 
 func (d *Detector) Process() {

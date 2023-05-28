@@ -27,7 +27,11 @@ func Initialize() *AIDSEngine {
 }
 
 func (aids *AIDSEngine) Start() error {
-	aids.Detector.Load()
+	err := aids.Detector.Load()
+	if err != nil {
+		log.Error("Loading Detection Failed, Process will not start")
+		return err
+	}
 	aids.Detector.Process()
 	return nil
 }
