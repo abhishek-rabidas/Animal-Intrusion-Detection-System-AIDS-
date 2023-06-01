@@ -8,13 +8,14 @@ import (
 )
 
 type Config struct {
-	Model          string  `json:"model"`
-	Cfg            string  `json:"cfg"`
-	Feed           string  `json:"feed"`
-	Classnames     string  `json:"classnames"`
-	GpuEnabled     bool    `json:"gpuEnabled"`
-	ScoreThreshold float32 `json:"scoreThreshold"`
-	NmsThreshold   float32 `json:"nmsThreshold"`
+	Model            string  `json:"model"`
+	Cfg              string  `json:"cfg"`
+	Feed             string  `json:"feed"`
+	Classnames       string  `json:"classnames"`
+	GpuEnabled       bool    `json:"gpuEnabled"`
+	ScoreThreshold   float32 `json:"scoreThreshold"`
+	NmsThreshold     float32 `json:"nmsThreshold"`
+	TriggerThreshold float32 `json:"triggerThreshold"`
 }
 
 func LoadConfig() (*Config, error) {

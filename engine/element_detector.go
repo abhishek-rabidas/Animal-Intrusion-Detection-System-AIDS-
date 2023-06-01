@@ -61,7 +61,7 @@ func (d *Detector) Process() {
 
 		if isTrue {
 			frame, _ := detect(&d.net, mat.Clone(), d.config.ScoreThreshold,
-				d.config.NmsThreshold, d.outputNames, d.classes)
+				d.config.NmsThreshold, d.outputNames, d.classes, d.config.TriggerThreshold)
 
 			d.window.IMShow(frame)
 			key := d.window.WaitKey(1)
@@ -82,13 +82,14 @@ func (d *Detector) Close() {
 	log.Info("Process Completed")
 }
 
-func detect(net *gocv.Net, src gocv.Mat, scoreThreshold float32, nmsThreshold float32, OutputNames []string, classes []string) (gocv.Mat, []string) {
+func detect(net *gocv.Net, src gocv.Mat, scoreThreshold float32, nmsThreshold float32, OutputNames []string, classes []string, triggerThreshold float32) (gocv.Mat, []string) {
 	img := src.Clone()
 	img.ConvertTo(&img, gocv.MatTypeCV32F)
 	blob := gocv.BlobFromImage(img, 1/255.0, image.Pt(416, 416), gocv.NewScalar(0, 0, 0, 0), true, false)
 	net.SetInput(blob, "")
 	probs := net.ForwardLayers(OutputNames)
 	boxes, confidences, classIds := postProcess(img, &probs)
+	//go CheckThreshold(confidences, triggerThreshold)
 	indices := make([]int, 100)
 	if len(boxes) == 0 { // No Classes
 		return src, []string{}
