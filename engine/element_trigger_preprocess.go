@@ -8,6 +8,8 @@ import (
 	"time"
 )
 
+var address string = "http://localhost:55555"
+
 func Trigger(class string) {
 	msg := DetectionMessage{
 		Timestamp: time.Now().Format("02-01-2006 15:04:05"),
@@ -16,7 +18,7 @@ func Trigger(class string) {
 
 	payload, _ := json.Marshal(msg)
 
-	post, err := http.Post("http://localhost:55555", "application/json", bytes.NewReader(payload))
+	post, err := http.Post(address+"/alert", "application/json", bytes.NewReader(payload))
 	if err != nil || post.StatusCode != 200 {
 		log.Error(err)
 	}
