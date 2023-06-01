@@ -8,6 +8,7 @@ import (
 	"time"
 )
 
+// TODO:Fetch from Config file
 var address string = "http://localhost:55555"
 
 func Trigger(class string) {
