@@ -89,7 +89,7 @@ func detect(net *gocv.Net, src gocv.Mat, scoreThreshold float32, nmsThreshold fl
 	net.SetInput(blob, "")
 	probs := net.ForwardLayers(OutputNames)
 	boxes, confidences, classIds := postProcess(img, &probs)
-	//go CheckThreshold(confidences, triggerThreshold)
+	go CheckThreshold(confidences, triggerThreshold, classes, classIds)
 	indices := make([]int, 100)
 	if len(boxes) == 0 { // No Classes
 		return src, []string{}
